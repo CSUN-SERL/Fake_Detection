@@ -23,19 +23,24 @@ def process():
   rospy.spin()
 
 def Odometry_update(data):
-  x = data.pose.pose.position.x
+  #Getting x and z change for robot
+  x = data.pose.pose.position.x  
   z = data.pose.pose.position.z
 
+  #Getting the Quaternion info
   xQ = data.pose.pose.orientation.x
   yQ = data.pose.pose.orientation.y
   zQ = data.pose.pose.orientation.z
   wQ = data.pose.pose.orientation.w
 
+  # Converting quaternion to euler angle
   xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
 
+  #Robot position constantly updated
   robot_pose['mission1']['1']['x'] = robot_pose['mission1']['1']['x'] + x
   robot_pose['mission1']['1']['y'] = robot_pose['mission1']['1']['y'] + y
   robot_pose['mission1']['1']['theta'] = robot_pose['mission1']['1']['theta'] + yE
+  
   #find()
 
 def quaternion_to_euler_angle(w, x, y, z):
