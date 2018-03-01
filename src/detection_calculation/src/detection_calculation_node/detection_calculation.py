@@ -12,10 +12,8 @@ import math
 
 global MyHumans
 global robot_pose
-
-def loadInfo():
-  MyHumans = yaml.load(open('human.yaml'))
-  robot_pose = yaml.load(open('robot.yaml'))
+MyHumans = yaml.load(open('human.yaml'))
+robot_pose = yaml.load(open('robot.yaml'))
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
@@ -27,10 +25,12 @@ def process():
 def Odometry_update(data):
   x = data.pose.pose.position.x
   y = data.pose.pose.position.y
+  th = data.pose.pose.position.th
 
-  #robot_pose['1']['1']['x'] = x
-  #robot_pose['1']['1']['y'] = y
-  #find()
+  robot_pose['mission1']['1']['x'] = robot_pose['mission1']['1']['x'] + x
+  robot_pose['mission1']['1']['y'] = robot_pose['mission1']['1']['y'] + y
+  robot_pose['mission1']['1']['theta'] = robot_pose['mission1']['1']['theta'] + th
+  find()
 
 
 def imageCallBack(data):
@@ -44,9 +44,7 @@ def find():
       print("Correct")
 
 def main():
-  loadInfo()
-  print(MyHumans)
-  #process()
+  process()
 
 
 if __name__ == "__main__":
