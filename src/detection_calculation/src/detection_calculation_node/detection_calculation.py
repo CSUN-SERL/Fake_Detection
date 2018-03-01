@@ -11,11 +11,15 @@ import math
 
 
 global MyHumans
-global robot_pose
+global init_robot_pose
+global robot_pos_x, robot_pos_z, robot_pos_th
 
-def loadInfo():
-  MyHumans = yaml.load(open('human.yaml'))
-  robot_pose = yaml.load(open('robot.yaml'))
+MyHumans = yaml.load(open('human.yaml'))
+init_robot_pose = yaml.load(open('robot.yaml'))
+
+robot_pos_x = init_robot_pose['mission1']['1']['x']
+robot_pos_z = init_robot_pose['mission1']['1']['y'] #Must be changed to y after config fix
+robot_pos_th = init_robot_pose['mission1']['1']['theta']
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
@@ -25,12 +29,53 @@ def process():
   rospy.spin()
 
 def Odometry_update(data):
+  #Getting x and z change for robot
   x = data.pose.pose.position.x
-  y = data.pose.pose.position.y
+  z = data.pose.pose.position.z
 
-  #robot_pose['1']['1']['x'] = x
-  #robot_pose['1']['1']['y'] = y
-  #find()
+  #Getting the Quaternion info
+  xQ = data.pose.pose.orientation.x
+  yQ = data.pose.pose.orientation.y
+  zQ = data.pose.pose.orientation.z
+  wQ = data.pose.pose.orientation.w
+
+  # Converting quaternion to euler angle
+  xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
+
+  #Robot position constantly updated
+  robot_pos_x = robot_pos_x + x
+  robot_pos_z = robot_pos_z + z
+  robot_pos_th = robot_pos_th + yE
+  
+  #Searching for humans
+  find()
+
+#Conversion Function 
+def quaternion_to_euler_angle(w, x, y, z):
+  ysqr = y * y
+
+  t0 = +2.0 * (w * x + y * z)
+  t1 = +1.0 - 2.0 * (x * x + ysqr)
+  X = math.degrees(math.atan2(t0, t1))
+
+  t2 = +2.0 * (w * y - z * x)
+  t2 = +1.0 if t2 > +1.0 else t2
+  t2 = -1.0 if t2 < -1.0 else t2
+  Y = math.degrees(math.asin(t2))
+
+  t3 = +2.0 * (w * z + x * y)
+  t4 = +1.0 - 2.0 * (ysqr + z * z)
+  Z = math.degrees(math.atan2(t3, t4))
+	
+  return X, Y, Z  
+
+
+def cartesian_to_polar_distance(x,z):
+  return math.sqrt(x**2 + z**2)
+
+#returning rad
+def cartesian_to_polar_angle(x,z):
+  return math.atan2(z/x)
 
 
 def imageCallBack(data):
@@ -40,13 +85,11 @@ def imageCallBack(data):
 def find():
   for i in range(0,291):
     dist = math.sqrt( (robot_pose['1']['1']['x'] - MyHumans[str(i)]['x'])**2 + (robot_pose['1']['1']['y'] - MyHumans[str(i)['y']])**2 )
-    if dist <= 10:
+    if dist <= 0.5:  #dof
       print("Correct")
 
 def main():
-  loadInfo()
-  print(MyHumans)
-  #process()
+  process()
 
 
 if __name__ == "__main__":
