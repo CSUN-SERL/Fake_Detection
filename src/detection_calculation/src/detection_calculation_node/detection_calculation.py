@@ -63,10 +63,10 @@ def quaternion_to_euler_angle(w, x, y, z):
 	
 	return X, Y, Z  
 
-def cartesian_to_polar_angle(x,z):
+def cartesian_to_polar_distance(x,z):
   return math.sqrt(x**2 + z**2)
 
-def cartesian_to_polar_(x,z):
+def cartesian_to_polar_angle(x,z):
   return math.degrees(math.atan(z/x))
 
 
