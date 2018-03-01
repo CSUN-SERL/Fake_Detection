@@ -14,12 +14,15 @@ global MyHumans
 global init_robot_pose
 global robot_pos_x, robot_pos_z, robot_pos_th
 
+mission_number_ = rospy.get_param('~mission_number')
+robot_number_ = rospy.get_param('~robot_number#')
+
 MyHumans = yaml.load(open('human.yaml'))
 init_robot_pose = yaml.load(open('robot.yaml'))
 
-robot_pos_x = init_robot_pose['mission1']['1']['x']
-robot_pos_z = init_robot_pose['mission1']['1']['y'] #Must be changed to y after config fix
-robot_pos_th = init_robot_pose['mission1']['1']['theta']
+robot_pos_x = init_robot_pose[str(mission_number_)][str(robot_number_)]['x']
+robot_pos_z = init_robot_pose[str(mission_number_)][str(robot_number_)]['y'] #Must be changed to y after config fix
+robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta']
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
@@ -84,7 +87,7 @@ def imageCallBack(data):
 
 def find():
   for i in range(0,291):
-    dist = math.sqrt( (robot_pose['1']['1']['x'] - MyHumans[str(i)]['x'])**2 + (robot_pose['1']['1']['y'] - MyHumans[str(i)['y']])**2 )
+    dist = math.sqrt( (robot_pos_x - MyHumans[str(i)]['x'])**2 + (robot_pos_z - MyHumans[str(i)['y']])**2 )
     if dist <= 0.5:  #dof
       print("Correct")
 
