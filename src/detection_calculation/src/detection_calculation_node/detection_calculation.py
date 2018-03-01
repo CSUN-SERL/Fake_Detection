@@ -13,11 +13,13 @@ import math
 global MyHumans
 global init_robot_pose
 global robot_pos_x, robot_pos_z, robot_pos_th
+
 MyHumans = yaml.load(open('human.yaml'))
-robot_pose = yaml.load(open('robot.yaml'))
+init_robot_pose = yaml.load(open('robot.yaml'))
+
 robot_pos_x = init_robot_pose['mission1']['1']['x']
-robot_pos_z = init_robot_pose['mission1']['1']['z']
-robot_pos_th = robot_pose['mission1']['1']['theta']
+robot_pos_z = init_robot_pose['mission1']['1']['y'] #Must be changed to y after config fix
+robot_pos_th = init_robot_pose['mission1']['1']['theta']
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
@@ -28,7 +30,7 @@ def process():
 
 def Odometry_update(data):
   #Getting x and z change for robot
-  x = data.pose.pose.position.x robot_pose 
+  x = data.pose.pose.position.x
   z = data.pose.pose.position.z
 
   #Getting the Quaternion info
@@ -65,7 +67,7 @@ def quaternion_to_euler_angle(w, x, y, z):
   t4 = +1.0 - 2.0 * (ysqr + z * z)
   Z = math.degrees(math.atan2(t3, t4))
 	
-	return X, Y, Z  
+  return X, Y, Z  
 
 
 def cartesian_to_polar_distance(x,z):
