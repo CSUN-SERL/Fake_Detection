@@ -11,9 +11,13 @@ import math
 
 
 global MyHumans
-global robot_pose
+global init_robot_pose
+global robot_pos_x, robot_pos_z, robot_pos_th
 MyHumans = yaml.load(open('human.yaml'))
 robot_pose = yaml.load(open('robot.yaml'))
+robot_pos_x = init_robot_pose['mission1']['1']['x']
+robot_pos_z = init_robot_pose['mission1']['1']['z']
+robot_pos_th = robot_pose['mission1']['1']['theta']
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
@@ -24,7 +28,7 @@ def process():
 
 def Odometry_update(data):
   #Getting x and z change for robot
-  x = data.pose.pose.position.x  
+  x = data.pose.pose.position.x robot_pose 
   z = data.pose.pose.position.z
 
   #Getting the Quaternion info
@@ -37,9 +41,9 @@ def Odometry_update(data):
   xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
 
   #Robot position constantly updated
-  robot_pose['mission1']['1']['x'] = robot_pose['mission1']['1']['x'] + x
-  robot_pose['mission1']['1']['y'] = robot_pose['mission1']['1']['y'] + y
-  robot_pose['mission1']['1']['theta'] = robot_pose['mission1']['1']['theta'] + yE
+  robot_pos_x = robot_pos_x + x
+  robot_pos_z = robot_pos_z + z
+  robot_pos_th = robot_pos_th + yE
   
   #Searching for humans
   find()
@@ -63,11 +67,13 @@ def quaternion_to_euler_angle(w, x, y, z):
 	
 	return X, Y, Z  
 
+
 def cartesian_to_polar_distance(x,z):
   return math.sqrt(x**2 + z**2)
 
+#returning rad
 def cartesian_to_polar_angle(x,z):
-  return math.degrees(math.atan(z/x))
+  return math.atan2(z/x)
 
 
 def imageCallBack(data):
