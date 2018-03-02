@@ -16,6 +16,9 @@ global MyHumans
 global init_robot_pose
 global robot_pos_x, robot_pos_z, robot_pos_th
 
+human_msg_ = Human()
+compiled_msgs_ = CompiledMessage()
+
 #RosLaunch Parameters
 mission_number_ = 'mission1' #rospy.get_param('~mission_number')
 robot_number_ = '1' #rospy.get_param('~robot_number#')
@@ -31,6 +34,7 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
+  pub = rospy.Publisher('Huge_Dick_Topic', CompiledMessage, queue_size=10)
   rospy.Subscriber('robot4/odom', Odometry, Odometry_update)
   rospy.Subscriber('/robot4/camera/rgb/image_raw', Image, imageCallBack)
 
@@ -111,7 +115,10 @@ def find(RoboPosX, RoboPosZ, RoboPosTh):
     	robot_degree = math.degree(RoboPosTh)
     	FOV_degree = math.degree(init_robot_pose[str(mission_number_)][str(robot_number_)]['fov'])/2.0		#field of view divided by two, relative to robot
     	if (human_degree <= robot_degree + FOV_degree ) and (human_degree >= robot_degree - FOV_degree and (MyHumans[str(i)]['dclass'] != 2)):
-    		print('check')
+    		human_msg_.id = i
+    		human_msg_.dclass = int(MyHumans[str(i)]['dclass'])
+    		human_msg_.angleToRobot = int(cartesian_to_polar_angle(hx, hz))
+    		compiled_msgs_.humans.append(human_msg_)
 
 
 
