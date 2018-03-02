@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>newDetectionMessage</name>
+  <name>new_detection_messages</name>
   <version>0.0.0</version>
   <description>The newDetectionMessage package</description>
 
