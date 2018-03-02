@@ -7,10 +7,10 @@
 
 namespace sarwai {
 
-  ImageBoundingBoxMerger::ImageBoundingBoxMerger() {
-    //Subscribes to darknet_ros/detection_image
-    this->nh_ = new ros::NodeHandle();
+  ImageBoundingBoxMerger::ImageBoundingBoxMerger(std::string subscriptionTopic) {
+    this->m_nh = new ros::NodeHandle();
 
+    this->m_trackingSub = this->m_nh->subscribe(subscriptionTopic, 1000, &ImageBoundingBoxMerger::drawBoxesCallback, this);
 //    this->image_frame_sub_ = this->nh_->subscribe(
 //      "/compiled_ros_message", 1000, &ImageBoundingBoxMerger::RunImageProcess, this);
 
@@ -25,6 +25,10 @@ namespace sarwai {
     //empty
   }
   
+  ImageBoundingBoxMerger::drawBoxesCallback(new_detection_messages::CompiledMessageConstPtr& msg) {
+    
+  }
+
 //  void ImageBoundingBoxMerger::PublishMergedData(
 //    sensor_msgs::Image image, darknet_ros_msgs::BoundingBox box, unsigned int robotId) {
 //      detection_msgs::ProcessedVisualDetection outgoing_detection_msg;

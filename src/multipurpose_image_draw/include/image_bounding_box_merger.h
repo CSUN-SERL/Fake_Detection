@@ -3,6 +3,7 @@
 
 //#include <vector>
 //#include <queue>
+#include <string>
 
 #include "ros/ros.h"
 #include "new_detection_messages/CompiledMessage.h"
@@ -22,15 +23,16 @@ namespace sarwai {
   class ImageBoundingBoxMerger {
   public:
 
-    ImageBoundingBoxMerger();
+    ImageBoundingBoxMerger(std::string subscriptionTopic);
     ~ImageBoundingBoxMerger();
 //    void TrackMagic();
 
   private:
     //VisualDetectionTracker* tracking_handler_;
-    ros::NodeHandle* nh_;
+    ros::NodeHandle* m_nh;
 
-    //ros::Subscriber image_frame_sub_;
+    ros::Subscriber m_trackingSub;
+    void drawBoxesCallback(
     // ros::Subscriber bounding_box_sub_;
     // ros::Subscriber detection_flag_sub_;
 
@@ -44,6 +46,7 @@ namespace sarwai {
     //queue of bounding box information
 //    std::queue<std::vector<darknet_ros_msgs::BoundingBox>> bounding_boxes_matrix_;  
     
+    sensor_msgs::Image drawBox(sensor_msgs::Image image, new_detection_messages::Human human);
 //    void PublishMergedData(sensor_msgs::Image, darknet_ros_msgs::BoundingBox, unsigned robotId); 
 //    void RunImageProcess(const detection_msgs::CompiledMessageConstPtr& msg);
 //    void ImageAndBoundingBoxToPublishQueue(darknet_ros_msgs::BoundingBox,
