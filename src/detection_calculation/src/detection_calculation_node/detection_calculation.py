@@ -7,8 +7,8 @@ from rospy import ROSException
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose
-from NewDetectionMessage.msg import NewDetectionMessage
-from NewDetectionMessage.msg import Human
+from new_detection_messages.msg import CompiledMessage
+from new_detection_messages.msg import Human
 import math
 
 
@@ -17,8 +17,8 @@ global init_robot_pose
 global robot_pos_x, robot_pos_z, robot_pos_th
 
 #RosLaunch Parameters
-mission_number_ = rospy.get_param('~mission_number')
-robot_number_ = rospy.get_param('~robot_number#')
+mission_number_ = 'mission1' #rospy.get_param('~mission_number')
+robot_number_ = '1' #rospy.get_param('~robot_number#')
 
 #Config file dictinary
 MyHumans = yaml.load(open('human.yaml'))
