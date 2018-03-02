@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(MultiPurposeImageDraw)
+project(multipurpose_image_draw)
 
 add_compile_options(-std=c++11)
 
@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	sensor_msgs
 	std_msgs
-	NewDetectionMessage
+	new_detection_messages
 )
 
 catkin_package(

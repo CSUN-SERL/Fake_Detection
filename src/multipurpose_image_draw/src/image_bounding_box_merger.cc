@@ -1,9 +1,9 @@
 #include <iostream>
 
 #include "image_bounding_box_merger.h"
-#include "sensor_msgs/Image.h"
-#include <opencv2/opencv.hpp>
-#include <cv_bridge/cv_bridge.h>
+//#include "sensor_msgs/Image.h"
+//#include <opencv2/opencv.hpp>
+//#include <cv_bridge/cv_bridge.h>
 
 namespace sarwai {
 
