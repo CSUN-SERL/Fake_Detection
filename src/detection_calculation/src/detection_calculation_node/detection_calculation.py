@@ -35,7 +35,7 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
-  pub = rospy.Publisher('Huge_Dick_Topic', CompiledMessage, queue_size=10)
+  pub = rospy.Publisher('Huge_Dick_Topic', CompiledMessage, queue_size=100)
   rospy.Subscriber('robot4/odom', Odometry, Odometry_update)
   rospy.Subscriber('/robot4/camera/rgb/image_raw', Image, imageCallBack)
 
@@ -67,6 +67,7 @@ def Odometry_update(data):
   compiled_msgs_.header.stamp = rospy.Time.now()
   compiled_msgs_.img = image_arr[0]
   compiled_msgs_.robot = robot_number_
+  pub.publish(compiled_msgs_)
   image_arr.pop(0)
 
 
@@ -127,9 +128,6 @@ def find(RoboPosX, RoboPosZ, RoboPosTh):
     		human_msg_.distanceToRobot = int(dist)
     		compiled_msgs_.humans.append(human_msg_)
         compiled_msgs_.humanQueries.append(str(i))
-
-
-
 
 
 
