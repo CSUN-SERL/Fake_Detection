@@ -15,6 +15,7 @@ import math
 global MyHumans
 global init_robot_pose
 global robot_pos_x, robot_pos_z, robot_pos_th
+image_arr = []
 
 human_msg_ = Human()
 compiled_msgs_ = CompiledMessage()
@@ -47,7 +48,7 @@ def Odometry_update(data):
   z = data.pose.pose.position.z
 
   #Getting the Quaternion info
-  xQ = data.pose.pose.orientation.x
+	xQ = data.pose.pose.orientation.x
   yQ = data.pose.pose.orientation.y
   zQ = data.pose.pose.orientation.z
   wQ = data.pose.pose.orientation.w
@@ -62,6 +63,9 @@ def Odometry_update(data):
   
   #Searching for humans
   find(robot_pos_x, robot_pos_z, robot_pos_th)
+
+
+  image_arr.pop(0)
 
 
 #Conversion Function 
@@ -102,12 +106,12 @@ def cartesian_to_polar_angle(x,z):
 
 
 def imageCallBack(data):
-  print("sss")
+  image_arr.append(data.msg)
 
 
 
 def find(RoboPosX, RoboPosZ, RoboPosTh):
-  for i in range(0,291):
+	for i in range(0,291):
     dist = math.sqrt( (RoboPosX - MyHumans[str(i)]['x'])**2 + (RoboPosZ - MyHumans[str(i)['z']])**2 )
     if dist <= 0.5:  #dof
     	rx,rz,hx,hz = shift_points(robot_pos_x,robot_pos_z, MyHumans[str(i)]['x'], MyHumans[str(i)]['z'])
@@ -118,7 +122,9 @@ def find(RoboPosX, RoboPosZ, RoboPosTh):
     		human_msg_.id = i
     		human_msg_.dclass = int(MyHumans[str(i)]['dclass'])
     		human_msg_.angleToRobot = int(cartesian_to_polar_angle(hx, hz))
+    		human_msg_.distanceToRobot = int(dist)
     		compiled_msgs_.humans.append(human_msg_)
+
 
 
 
