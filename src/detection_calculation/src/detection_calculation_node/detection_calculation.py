@@ -7,6 +7,8 @@ from rospy import ROSException
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose
+from NewDetectionMessage.msg import NewDetectionMessage
+from NewDetectionMessage.msg import Human
 import math
 
 
