@@ -32,7 +32,9 @@ namespace sarwai {
     ros::NodeHandle* m_nh;
 
     ros::Subscriber m_trackingSub;
-    void drawBoxesCallback(
+    void drawBoxesCallback(new_detection_messages::CompiledMessageConstPtr& msg);
+    void drawBoxAndSentQuery(const new_detection_messages::CompiledMessageConstPtr& msg, new_detection_messages::Human human) const;
+    void drawBoxAroundHuman(sensor_msgs::Image& image, new_detection_msgs::Human human) const;
     // ros::Subscriber bounding_box_sub_;
     // ros::Subscriber detection_flag_sub_;
 

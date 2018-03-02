@@ -25,8 +25,29 @@ namespace sarwai {
     //empty
   }
   
-  ImageBoundingBoxMerger::drawBoxesCallback(new_detection_messages::CompiledMessageConstPtr& msg) {
-    
+  void ImageBoundingBoxMerger::drawBoxesCallback(new_detection_messages::CompiledMessageConstPtr& msg) {
+    // Draw boxes for each new query
+    for(unsigned i = 0; i < msg.humanQueries.length(); ++i) {
+      for(unsigned h = 0; h < msg.humans.length(); ++h) {
+        if(msg.humans[h].id == msg.humanQueries[i]) {
+          drawBoxAndSendQuery(msg, msg.humans[h]);
+          break;
+        }
+      }
+    }
+    // Draw boxes around each person in one frame
+  }
+
+  void ImageBoundingBoxMerger::drawBoxAndSendQuery(const new_detection_messages::CompiledMessageConstPtr& msg, const new_detection_messages::Human& human) const {
+    sensor_msgs::Image imageCopy(msg.img);
+    drawBoxAroundHuman(imageCopy, human);
+  }
+
+  void ImageBoundingBoxMerger::drawBoxAroundHuman(sensor_msgs::Image& image, new_detection_messages::Human& human) const {
+    cv_bridge::CvImagePtr cvImage;
+    cvImage = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
+    cv::Mat imageMatrix = cvImage->image;
+    cv::Point topLeftCorner = cv::Point(
   }
 
 //  void ImageBoundingBoxMerger::PublishMergedData(
