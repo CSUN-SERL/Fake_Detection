@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>NewDetectionMessage</name>
+  <name>newDetectionMessage</name>
   <version>0.0.0</version>
-  <description>The NewDetectionMessage package</description>
+  <description>The newDetectionMessage package</description>
 
   <maintainer email="serl@todo.todo">serl</maintainer>
 

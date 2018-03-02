@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(NewDetectionMessage)
+project(newDetectionMessage)
 
 find_package(catkin REQUIRED COMPONENTS
 	sensor_msgs
@@ -10,7 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
 FILES
-	NewDetectionMessage.msg
+	CompiledMessage.msg
 	Human.msg
 )
 
