@@ -9,11 +9,25 @@ from new_detection_msgs.msg import CompiledMessage
 from new_detection_msgs.msg import Human
 import math
 
-global human_
+human_tracked = {}
+
+
+def process():
+  rospy.init_node('pseudo_trcker_node', anonymous=True)
+  pub = rospy.Publisher('sarwai_detection/tracker_msgs', CompiledMessage, queue_size=100)
+  rospy.Subscriber('robot4/odom', new_detection_msgs, getInfo)
+
+  rospy.spin()
+
+
+def getInfo(data):
+	for i in range(0, len(data.humans)):
+		if data.humans[i].id not in dict.keys():
+			human_tracked - {data.humans[i].id:'1'}
 
 
 def main():
-	print("Hello")
+	process()
 
 
 if __name__ == "__main__":
