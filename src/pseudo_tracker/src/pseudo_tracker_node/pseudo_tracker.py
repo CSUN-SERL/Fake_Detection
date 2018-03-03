@@ -15,7 +15,7 @@ human_tracked = {}
 def process():
   rospy.init_node('pseudo_trcker_node', anonymous=True)
   pub = rospy.Publisher('sarwai_detection/tracker_msgs', CompiledMessage, queue_size=100)
-  rospy.Subscriber('sarwai_detection/custom_msgs_info', new_detection_msgs, getInfo)
+  rospy.Subscriber('sarwai_detection/custom_msgs_info', CompiledMessage, getInfo)
 
   rospy.spin()
 
@@ -25,6 +25,8 @@ def getInfo(data):
 		if data.humans[i].id not in dict.keys():
 			human_tracked[data.humans[i].id] = 1
 			data.humans[i].dclass = 1
+			data.humanQueries.append(data.humans[i].id)
+	pub.publish(data)
 
 
 def main():
