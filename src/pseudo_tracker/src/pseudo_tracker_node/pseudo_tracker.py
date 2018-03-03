@@ -14,7 +14,7 @@ human_tracked = {}
 
 def process():
   rospy.init_node('pseudo_trcker_node', anonymous=True)
-  pub = rospy.Publisher('sarwai_detection/tracker_msgs', CompiledMessage, queue_size=100)
+  pub = rospy.Publisher('sarwai_detection/tracker_msgs', CompiledMessage, queue_size=1000)
   rospy.Subscriber('sarwai_detection/custom_msgs_info', CompiledMessage, getInfo)
 
   rospy.spin()
