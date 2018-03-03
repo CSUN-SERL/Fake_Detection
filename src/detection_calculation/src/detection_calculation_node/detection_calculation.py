@@ -129,7 +129,6 @@ def find(RoboPosX, RoboPosZ, RoboPosTh):
     		human_msg_.angleToRobot = int(cartesian_to_polar_angle(hx, hz))
     		human_msg_.distanceToRobot = int(dist)
     		compiled_msgs_.humans.append(human_msg_)
-        #compiled_msgs_.humanQueries.append(str(i))
 
 
 
