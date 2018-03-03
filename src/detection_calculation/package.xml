@@ -3,7 +3,7 @@
   <name>detection_calculation</name>
   <version>0.0.0</version>
   <description>The detection_calculation package</description>
-  <maintainer email="serl@todo.todo">serl</maintainer>
+  <maintainer email="aren.mboghozian@gmail.com">serl</maintainer>
   <license>TODO</license>
 
   <build_depend>message_generation</build_depend>
