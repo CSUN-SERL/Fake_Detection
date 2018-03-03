@@ -24,6 +24,7 @@ def getInfo(data):
 	for i in range(0, len(data.humans)):
 		if data.humans[i].id not in dict.keys():
 			human_tracked[data.humans[i].id] = 1
+			data.humans[i].dclass = 1
 
 
 def main():
