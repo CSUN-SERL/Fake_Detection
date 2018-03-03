@@ -7,8 +7,8 @@ from rospy import ROSException
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
 from geometry_msgs.msg import Pose
-from new_detection_messages.msg import CompiledMessage
-from new_detection_messages.msg import Human
+from new_detection_msgs.msg import CompiledMessage
+from new_detection_msgs.msg import Human
 import math
 
 
@@ -35,7 +35,7 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
-  pub = rospy.Publisher('Huge_Dick_Topic', CompiledMessage, queue_size=100)
+  pub = rospy.Publisher('some_Topic', CompiledMessage, queue_size=100)
   rospy.Subscriber('robot4/odom', Odometry, Odometry_update)
   rospy.Subscriber('/robot4/camera/rgb/image_raw', Image, imageCallBack)
 
