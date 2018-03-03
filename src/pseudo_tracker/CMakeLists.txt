@@ -6,7 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   sensor_msgs
   geometry_msgs
-  new_detection_messages
+  new_detection_msgs
 )
 
 catkin_python_setup()
