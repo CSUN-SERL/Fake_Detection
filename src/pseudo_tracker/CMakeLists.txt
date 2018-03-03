@@ -21,5 +21,5 @@ catkin_package(
   CATKIN_DEPENDS nav_msgs
   CATKIN_DEPENDS sensor_msgs
   CATKIN_DEPENDS geometry_msgs
-  CATKIN_DEPENDS new_detection_messages
+  CATKIN_DEPENDS new_detection_msgs
 )
