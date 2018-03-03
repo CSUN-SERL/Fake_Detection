@@ -12,6 +12,10 @@ namespace sarwai {
 
     m_trackingSub = m_nh->subscribe(subscriptionTopic, 1000, &ImageBoundingBoxMerger::drawBoxesCallback, this);
     m_visualDetectionPub = m_nh->advertise<new_detection_msgs::CompiledMessage>("/sarwai_detection/detection_processeddetection", 1000);
+    m_boxStreamPubOne = m_nh->advertise<sensor_msgs::Image>("/robot1/camera/rgb/image_boxed", 1000);
+    m_boxStreamPubTwo = m_nh->advertise<sensor_msgs::Image>("/robot2/camera/rgb/image_boxed", 1000);
+    m_boxStreamPubThree = m_nh->advertise<sensor_msgs::Image>("robot3/camera/rgb/image_boxed", 1000);
+    m_boxStreamPubFour = m_nh->advertise<sensor_msgs::Image>("robot4/camera/rgb/image_boxed", 1000);
 //    this->image_frame_sub_ = this->nh_->subscribe(
 //      "/compiled_ros_message", 1000, &ImageBoundingBoxMerger::RunImageProcess, this);
 
@@ -37,6 +41,7 @@ namespace sarwai {
       }
     }
     // Draw boxes around each person in one frame
+	sendBoxedStream(msg);
   }
 
   void ImageBoundingBoxMerger::drawBoxAndSendQuery(const new_detection_msgs::CompiledMessageConstPtr& msg, new_detection_msgs::Human human) const {
@@ -62,6 +67,15 @@ namespace sarwai {
     cv::Point bottomRightCorner = cv::Point(xCoord + BOXLENGTH, yCoord + BOXLENGTH);
     cv::rectangle(imageMatrix, topLeftCorner, bottomRightCorner, 3);
     image = *(cv_bridge::CvImage(image.header, "bgr8", imageMatrix).toImageMsg());
+  }
+
+  void ImageBoundingBoxMerger::sendBoxedStream(const new_detection_msgs::CompiledMessageConstPtr& msg) const {
+    sensor_msgs::Image imageCopy(msg->img);
+    for(unsigned i = 0; i < msg->humans.size(); ++i) {
+      drawBoxAroundHuman(imageCopy, msg->humans[i], msg->fov);
+    }
+
+
   }
 
 //  void ImageBoundingBoxMerger::PublishMergedData(
