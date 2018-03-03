@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
     
   ros::init(argc, argv, "image_listener");
-  sarwai::ImageBoundingBoxMerger merger;
+  sarwai::ImageBoundingBoxMerger merger("sarwai_detection/tracker_msgs");
   ros::spin();
 
 }
