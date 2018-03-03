@@ -74,8 +74,20 @@ namespace sarwai {
     for(unsigned i = 0; i < msg->humans.size(); ++i) {
       drawBoxAroundHuman(imageCopy, msg->humans[i], msg->fov);
     }
-
-
+    
+    unsigned id = msg->robot;
+    if(id == 1) {
+      m_boxStreamPubOne.publish(imageCopy);
+    }
+    else if(id == 2) {
+      m_boxStreamPubTwo.publish(imageCopy);
+    }
+    else if(id == 3) {
+      m_boxStreamPubThree.publish(imageCopy);
+    }
+    else {
+      m_boxStreamPubFour.publish(imageCopy);
+    }
   }
 
 //  void ImageBoundingBoxMerger::PublishMergedData(
