@@ -14,7 +14,7 @@ import math
 
 global MyHumans
 global init_robot_pose
-global robot_pos_x, robot_pos_z, robot_pos_th
+
 image_arr = []
 
 human_msg_ = Human()
@@ -36,8 +36,8 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
   pub = rospy.Publisher('sarwai_detection/custom_msgs_info', CompiledMessage, queue_size=1000)
-  rospy.Subscriber('robot4/odom', Odometry, Odometry_update)
-  rospy.Subscriber('/robot4/camera/rgb/image_raw', Image, imageCallBack)
+  rospy.Subscriber('robot1/odom', Odometry, Odometry_update)
+  rospy.Subscriber('/robot1/camera/rgb/image_raw', Image, imageCallBack)
 
   rospy.spin()
 
@@ -57,6 +57,7 @@ def Odometry_update(data):
   xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
 
   #Robot position constantly updated
+  global robot_pos_x, robot_pos_z, robot_pos_th
   robot_pos_x = robot_pos_x + x
   robot_pos_z = robot_pos_z + z
   robot_pos_th = robot_pos_th + yE
@@ -117,18 +118,19 @@ def imageCallBack(data):
 
 def find(RoboPosX, RoboPosZ, RoboPosTh):
   for i in range(0,291):
-    dist = math.sqrt( (RoboPosX - MyHumans[str(i)]['x'])**2 + (RoboPosZ - MyHumans[str(i)['z']])**2 )
-    if dist <= 0.5:  #dof
-    	rx,rz,hx,hz = shift_points(robot_pos_x,robot_pos_z, MyHumans[str(i)]['x'], MyHumans[str(i)]['z'])
-    	human_degree = math.degree(cartesian_to_polar_angle(hx, hz))
-    	robot_degree = math.degree(RoboPosTh)
-    	FOV_degree = math.degree(init_robot_pose[str(mission_number_)][str(robot_number_)]['fov'])/2.0		#field of view divided by two, relative to robot
-    	if (human_degree <= robot_degree + FOV_degree ) and (human_degree >= robot_degree - FOV_degree and (MyHumans[str(i)]['dclass'] != 2)):
-    		human_msg_.id = i
-    		human_msg_.dclass = int(MyHumans[str(i)]['dclass'])
-    		human_msg_.angleToRobot = int(cartesian_to_polar_angle(hx, hz))
-    		human_msg_.distanceToRobot = int(dist)
-    		compiled_msgs_.humans.append(human_msg_)
+		human_num = str(i)
+		dist = math.sqrt( (RoboPosX - MyHumans[human_num]['x'])**2 + (RoboPosZ - MyHumans[human_num]['z'])**2)
+		if dist <= 0.5:  #dof
+			rx,rz,hx,hz = shift_points(robot_pos_x,robot_pos_z, MyHumans[human_num]['x'], MyHumans[human_num]['z'])
+			human_degree = math.degree(cartesian_to_polar_angle(hx, hz))
+			robot_degree = math.degree(RoboPosTh)
+			FOV_degree = math.degree(init_robot_pose[str(mission_number_)][str(robot_number_)]['fov'])/2.0		#field of view divided by two, relative to robot
+			if (human_degree <= robot_degree + FOV_degree ) and (human_degree >= robot_degree - FOV_degree and (MyHumans[str(i)]['dclass'] != 2)):
+				human_msg_.id = i
+				human_msg_.dclass = int(MyHumans[str(i)]['dclass'])
+				human_msg_.angleToRobot = int(cartesian_to_polar_angle(hx, hz))
+				human_msg_.distanceToRobot = int(dist)
+				compiled_msgs_.humans.append(human_msg_)
 
 
 
