@@ -3,14 +3,15 @@
 #include "image_bounding_box_merger.h"
 //#include "sensor_msgs/Image.h"
 //#include <opencv2/opencv.hpp>
-//#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/cv_bridge.h>
 
 namespace sarwai {
 
   ImageBoundingBoxMerger::ImageBoundingBoxMerger(std::string subscriptionTopic) {
-    this->m_nh = new ros::NodeHandle();
+    m_nh = new ros::NodeHandle();
 
-    this->m_trackingSub = this->m_nh->subscribe(subscriptionTopic, 1000, &ImageBoundingBoxMerger::drawBoxesCallback, this);
+    m_trackingSub = m_nh->subscribe(subscriptionTopic, 1000, &ImageBoundingBoxMerger::drawBoxesCallback, this);
+    m_visualDetectionPub = m_nh->advertise<new_detection_msgs::CompiledMessage>("/sarwai_detection/detection_processeddetection", 1000);
 //    this->image_frame_sub_ = this->nh_->subscribe(
 //      "/compiled_ros_message", 1000, &ImageBoundingBoxMerger::RunImageProcess, this);
 
@@ -25,12 +26,12 @@ namespace sarwai {
     //empty
   }
   
-  void ImageBoundingBoxMerger::drawBoxesCallback(new_detection_messages::CompiledMessageConstPtr& msg) {
+  void ImageBoundingBoxMerger::drawBoxesCallback(const new_detection_msgs::CompiledMessageConstPtr& msg) {
     // Draw boxes for each new query
-    for(unsigned i = 0; i < msg.humanQueries.length(); ++i) {
-      for(unsigned h = 0; h < msg.humans.length(); ++h) {
-        if(msg.humans[h].id == msg.humanQueries[i]) {
-          drawBoxAndSendQuery(msg, msg.humans[h]);
+    for(unsigned i = 0; i < msg->humanQueries.size(); ++i) {
+      for(unsigned h = 0; h < msg->humans.size(); ++h) {
+        if(msg->humans[h].id == msg->humanQueries[i]) {
+          drawBoxAndSendQuery(msg, msg->humans[h]);
           break;
         }
       }
@@ -38,16 +39,29 @@ namespace sarwai {
     // Draw boxes around each person in one frame
   }
 
-  void ImageBoundingBoxMerger::drawBoxAndSendQuery(const new_detection_messages::CompiledMessageConstPtr& msg, const new_detection_messages::Human& human) const {
-    sensor_msgs::Image imageCopy(msg.img);
-    drawBoxAroundHuman(imageCopy, human);
+  void ImageBoundingBoxMerger::drawBoxAndSendQuery(const new_detection_msgs::CompiledMessageConstPtr& msg, new_detection_msgs::Human human) const {
+    sensor_msgs::Image imageCopy(msg->img);
+
+    drawBoxAroundHuman(imageCopy, human, msg->fov);
+
+    new_detection_msgs::CompiledMessage queryMsg;
+    queryMsg.header = msg->header;
+    queryMsg.img = imageCopy;
+    queryMsg.robot = msg->robot;
+
+    this->m_visualDetectionPub.publish(queryMsg);
   }
 
-  void ImageBoundingBoxMerger::drawBoxAroundHuman(sensor_msgs::Image& image, new_detection_messages::Human& human) const {
+  void ImageBoundingBoxMerger::drawBoxAroundHuman(sensor_msgs::Image& image, new_detection_msgs::Human human, float fov) const {
+    unsigned yCoord = image.height - (BOXLENGTH / 2);
+    unsigned xCoord = ((-1 * (human.angleToRobot / (fov / image.width))) + (image.width / 2)) - (BOXLENGTH / 2);
     cv_bridge::CvImagePtr cvImage;
     cvImage = cv_bridge::toCvCopy(image, sensor_msgs::image_encodings::BGR8);
     cv::Mat imageMatrix = cvImage->image;
-    cv::Point topLeftCorner = cv::Point(
+    cv::Point topLeftCorner = cv::Point(xCoord, yCoord);
+    cv::Point bottomRightCorner = cv::Point(xCoord + BOXLENGTH, yCoord + BOXLENGTH);
+    cv::rectangle(imageMatrix, topLeftCorner, bottomRightCorner, 3);
+    image = *(cv_bridge::CvImage(image.header, "bgr8", imageMatrix).toImageMsg());
   }
 
 //  void ImageBoundingBoxMerger::PublishMergedData(
