@@ -36,42 +36,44 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
   pub = rospy.Publisher('sarwai_detection/custom_msgs_info', CompiledMessage, queue_size=1000)
+  #rospy.Subscriber('/robot1/camera/rgb/image_raw', Image, imageCallBack)
   rospy.Subscriber('robot1/odom', Odometry, Odometry_update)
-  rospy.Subscriber('/robot1/camera/rgb/image_raw', Image, imageCallBack)
+
 
   rospy.spin()
 
 
 def Odometry_update(data):
-  #Getting x and z change for robot
-  x = data.pose.pose.position.x
-  z = data.pose.pose.position.z
+	print("ODOMMMMM")
+	#Getting x and z change for robot
+	x = data.pose.pose.position.x
+	z = data.pose.pose.position.z
 
-  #Getting the Quaternion info
-  xQ = data.pose.pose.orientation.x
-  yQ = data.pose.pose.orientation.y
-  zQ = data.pose.pose.orientation.z
-  wQ = data.pose.pose.orientation.w
+	#Getting the Quaternion info
+	xQ = data.pose.pose.orientation.x
+	yQ = data.pose.pose.orientation.y
+	zQ = data.pose.pose.orientation.z
+	wQ = data.pose.pose.orientation.w
 
-  # Converting quaternion to euler angle
-  xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
+	# Converting quaternion to euler angle
+	xE,yE,zE = quaternion_to_euler_angle(xQ,yQ,zQ,wQ)
 
-  #Robot position constantly updated
-  global robot_pos_x, robot_pos_z, robot_pos_th
-  robot_pos_x = robot_pos_x + x
-  robot_pos_z = robot_pos_z + z
-  robot_pos_th = robot_pos_th + yE
+	#Robot position constantly updated
+	global robot_pos_x, robot_pos_z, robot_pos_th
+	robot_pos_x = robot_pos_x + x
+	robot_pos_z = robot_pos_z + z
+	robot_pos_th = robot_pos_th + yE
 
-  #Searching for humans
-  find(robot_pos_x, robot_pos_z, robot_pos_th)
+	#Searching for humans
+	find(robot_pos_x, robot_pos_z, robot_pos_th)
 
-  #Msgs being set and released
-  compiled_msgs_.header.stamp = rospy.Time.now()
-  compiled_msgs_.img = image_arr[0]
-  compiled_msgs_.robot = robot_number_
-  compiled_msgs_.fov = init_robot_pose[str(mission_number_)][str(robot_number_)]['fov']
-  pub.publish(compiled_msgs_)
-  image_arr.pop(0)
+	#Msgs being set and released
+	compiled_msgs_.header.stamp = rospy.Time.now()
+	compiled_msgs_.img =  wait_for_message('/robot1/camera/rgb/image_raw', Image, timeout=None)      #image_arr[0]
+	compiled_msgs_.robot = robot_number_
+	compiled_msgs_.fov = init_robot_pose[str(mission_number_)][str(robot_number_)]['fov']
+	pub.publish(compiled_msgs_)
+	#image_arr.pop(0)
 
 
 #Conversion Function 
@@ -111,8 +113,9 @@ def cartesian_to_polar_angle(x,z):
 
 
 
-def imageCallBack(data):
-  image_arr.append(data.msg)
+#def imageCallBack(data):
+	#print("Testttt")
+	#image_arr.append(data.msg)
 
 
 
