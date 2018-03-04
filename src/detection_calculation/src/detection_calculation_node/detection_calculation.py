@@ -36,7 +36,6 @@ robot_pos_th = init_robot_pose[str(mission_number_)][str(robot_number_)]['theta'
 def process():
   rospy.init_node('detection_calculation_node', anonymous=True)
   pub = rospy.Publisher('sarwai_detection/custom_msgs_info', CompiledMessage, queue_size=1000)
-  #rospy.Subscriber('/robot1/camera/rgb/image_raw', Image, imageCallBack)
   rospy.Subscriber('robot1/odom', Odometry, Odometry_update)
 
 
@@ -69,12 +68,11 @@ def Odometry_update(data):
 
 	#Msgs being set and released
 	compiled_msgs_.header.stamp = rospy.Time.now()
-	compiled_msgs_.img =  wait_for_message('/robot1/camera/rgb/image_raw', Image, timeout=None)      #image_arr[0]
+	compiled_msgs_.img =  rospy.wait_for_message('/robot1/camera/rgb/image_raw', Image, timeout=None)
 	compiled_msgs_.robot = robot_number_
 	compiled_msgs_.fov = init_robot_pose[str(mission_number_)][str(robot_number_)]['fov']
 	pub.publish(compiled_msgs_)
-	#image_arr.pop(0)
-
+	
 
 #Conversion Function 
 def quaternion_to_euler_angle(w, x, y, z):
@@ -110,12 +108,6 @@ def cartesian_to_polar_distance(x,z):
 #returning rad
 def cartesian_to_polar_angle(x,z):
   return math.atan2(z/x)
-
-
-
-#def imageCallBack(data):
-	#print("Testttt")
-	#image_arr.append(data.msg)
 
 
 
