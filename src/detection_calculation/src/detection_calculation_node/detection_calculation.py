@@ -38,7 +38,6 @@ def process():
   pub = rospy.Publisher('sarwai_detection/custom_msgs_info', CompiledMessage, queue_size=1000)
   rospy.Subscriber('robot1/odom', Odometry, Odometry_update)
 
-
   rospy.spin()
 
 
@@ -72,7 +71,7 @@ def Odometry_update(data):
 	compiled_msgs_.robot = robot_number_
 	compiled_msgs_.fov = init_robot_pose[str(mission_number_)][str(robot_number_)]['fov']
 	pub.publish(compiled_msgs_)
-	
+
 
 #Conversion Function 
 def quaternion_to_euler_angle(w, x, y, z):
