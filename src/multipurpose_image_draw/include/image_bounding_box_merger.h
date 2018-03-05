@@ -5,7 +5,10 @@
 #include <string>
 
 #include "ros/ros.h"
-#include "new_detection_msgs/CompiledMessage.h"
+#include "detection_msgs/CompiledFakeMessage.h"
+#include "detection_msgs/ProcessedVisualDetection.h"
+#include "detection_msgs/BoundingBox.h"
+#include "detection_msgs/Human.h"
 
 
 namespace sarwai {
@@ -28,12 +31,12 @@ namespace sarwai {
     ros::Publisher m_boxStreamPubThree;
     ros::Publisher m_boxStreamPubFour;
 
-    void drawBoxesCallback(const new_detection_msgs::CompiledMessageConstPtr& msg);
-    void drawBoxAndSendQuery(const new_detection_msgs::CompiledMessageConstPtr& msg, new_detection_msgs::Human human) const;
-    void drawBoxAroundHuman(sensor_msgs::Image& image, new_detection_msgs::Human human, float fov) const;
-    void sendBoxedStream(const new_detection_msgs::CompiledMessageConstPtr& msg) const;
+    void drawBoxesCallback(const detection_msgs::CompiledFakeMessageConstPtr& msg);
+    void drawBoxAndSendQuery(const detection_msgs::CompiledFakeMessageConstPtr& msg, detection_msgs::Human human) const;
+    detection_msgs::BoundingBox drawBoxAroundHuman(sensor_msgs::Image& image, detection_msgs::Human human, float fov) const;
+    void sendBoxedStream(const detection_msgs::CompiledFakeMessageConstPtr& msg) const;
 
-    sensor_msgs::Image drawBox(sensor_msgs::Image image, new_detection_msgs::Human human);
+    sensor_msgs::Image drawBox(sensor_msgs::Image image, detection_msgs::Human human);
 
   };
 }

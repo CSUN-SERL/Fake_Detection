@@ -9,7 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	sensor_msgs
 	std_msgs
-	new_detection_msgs
+	detection_msgs
 )
 
 catkin_package(
